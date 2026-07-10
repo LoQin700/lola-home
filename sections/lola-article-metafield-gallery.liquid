@@ -1,23 +1,16 @@
 {% liquid
+  assign metafield_reference = section.settings.metafield_reference | strip
+  assign metafield_parts = metafield_reference | split: '.'
+  assign metafield_namespace = metafield_parts | first
+  assign metafield_key = metafield_parts | last
   assign gallery_images = blank
-  assign slot_image_count = 0
-  assign max_images = section.settings.max_images
 
-  if article != blank
-    assign gallery_images = article.metafields.custom.gallery_images.value
+  if article != blank and metafield_reference contains '.' and metafield_namespace != blank and metafield_key != blank
+    assign gallery_images = article.metafields[metafield_namespace][metafield_key].value
   endif
-
-  for index in (1..6)
-    assign image_setting_id = 'image_' | append: index
-    assign slot_image = section.settings[image_setting_id]
-
-    if slot_image != blank
-      assign slot_image_count = slot_image_count | plus: 1
-    endif
-  endfor
 %}
 
-{% if slot_image_count > 0 or gallery_images != blank or request.design_mode %}
+{% if gallery_images != blank or request.design_mode %}
   <section
     id="LolaArticleGallery-{{ section.id }}"
     class="section section--{{ section.settings.section_width }} lola-article-gallery spacing-style"
@@ -31,40 +24,9 @@
         <h4 class="lola-article-gallery__heading h4">{{ section.settings.heading }}</h4>
       {% endif %}
 
-      {% if slot_image_count > 0 %}
+      {% if gallery_images != blank %}
         <ul class="lola-article-gallery__grid" role="list">
-          {% assign rendered_count = 0 %}
-
-          {% for index in (1..6) %}
-            {% if rendered_count < max_images %}
-              {% liquid
-                assign image_setting_id = 'image_' | append: index
-                assign gallery_image = section.settings[image_setting_id]
-              %}
-
-              {% if gallery_image != blank %}
-                {% assign rendered_count = rendered_count | plus: 1 %}
-                <li class="lola-article-gallery__item">
-                  <div class="lola-article-gallery__media">
-                    {{
-                      gallery_image
-                      | image_url: width: 1800
-                      | image_tag:
-                        widths: '320, 480, 640, 800, 1000, 1200, 1500, 1800',
-                        sizes: '(max-width: 749px) calc((100vw - 44px) / 2), (max-width: 989px) calc((100vw - 96px) / 3), calc(100vw / 3)',
-                        loading: 'lazy',
-                        class: 'lola-article-gallery__image',
-                        alt: gallery_image.alt | default: article.title
-                    }}
-                  </div>
-                </li>
-              {% endif %}
-            {% endif %}
-          {% endfor %}
-        </ul>
-      {% elsif gallery_images != blank %}
-        <ul class="lola-article-gallery__grid" role="list">
-          {% for image in gallery_images limit: max_images %}
+          {% for image in gallery_images limit: section.settings.max_images %}
             {% liquid
               assign gallery_image = image.preview_image
               if gallery_image == blank
@@ -94,7 +56,7 @@
         </ul>
       {% elsif request.design_mode %}
         <div class="lola-article-gallery__empty">
-          <p>请绑定文章图片动态源，或填写文章图片列表元字段 custom.gallery_images。</p>
+          <p>请填写文章图片列表元字段的命名空间与键。</p>
         </div>
       {% endif %}
     </div>
@@ -212,38 +174,11 @@
       "content": "图片来源"
     },
     {
-      "type": "paragraph",
-      "content": "每个图片位置均可手动上传，或点击动态源图标关联文章的单张图片元字段。未绑定的位置不会显示。"
-    },
-    {
-      "type": "image_picker",
-      "id": "image_1",
-      "label": "图片 1"
-    },
-    {
-      "type": "image_picker",
-      "id": "image_2",
-      "label": "图片 2"
-    },
-    {
-      "type": "image_picker",
-      "id": "image_3",
-      "label": "图片 3"
-    },
-    {
-      "type": "image_picker",
-      "id": "image_4",
-      "label": "图片 4"
-    },
-    {
-      "type": "image_picker",
-      "id": "image_5",
-      "label": "图片 5"
-    },
-    {
-      "type": "image_picker",
-      "id": "image_6",
-      "label": "图片 6"
+      "type": "text",
+      "id": "metafield_reference",
+      "label": "图片列表元字段",
+      "default": "custom.gallery_images",
+      "info": "填写命名空间与键，例如 custom.gallery_images"
     },
     {
       "type": "header",
@@ -263,7 +198,7 @@
       "id": "max_images",
       "label": "最多显示数量",
       "min": 1,
-      "max": 6,
+      "max": 12,
       "step": 1,
       "default": 6
     },
