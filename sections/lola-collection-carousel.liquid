@@ -1,35 +1,26 @@
 {% liquid
   assign desktop_columns = section.settings.desktop_columns
-  assign tablet_columns = section.settings.tablet_columns
   assign mobile_layout = section.settings.mobile_layout
 %}
 
+<div
+  class="section-background"
+  style="background-color: {{ section.settings.background_color }};"
+></div>
+
 <section
   id="LolaCollectionCarousel-{{ section.id }}"
-  class="lola-collection-carousel"
+  class="section section--{{ section.settings.section_width }} lola-collection-carousel spacing-style"
   data-mobile-layout="{{ mobile_layout }}"
   style="
-    --lcc-background: {{ section.settings.background_color }};
+    {% render 'spacing-style', settings: section.settings %}
     --lcc-heading-color: {{ section.settings.heading_color }};
     --lcc-title-color: {{ section.settings.collection_title_color }};
     --lcc-card-background: {{ section.settings.card_background }};
     --lcc-gap: {{ section.settings.card_gap }}px;
     --lcc-radius: {{ section.settings.card_radius }}px;
     --lcc-desktop-columns: {{ desktop_columns }};
-    --lcc-tablet-columns: {{ tablet_columns }};
-    --lcc-mobile-carousel-width: {{ section.settings.mobile_carousel_width }}%;
-    --lcc-heading-size: {{ section.settings.heading_size }}px;
-    --lcc-heading-size-mobile: {{ section.settings.heading_size_mobile }}px;
-    --lcc-title-size: {{ section.settings.title_size }}px;
-    --lcc-title-size-mobile: {{ section.settings.title_size_mobile }}px;
     --lcc-image-ratio: {{ section.settings.image_ratio }};
-    --lcc-image-fit: {{ section.settings.image_fit }};
-    --lcc-section-padding-top: {{ section.settings.padding_top }}px;
-    --lcc-section-padding-bottom: {{ section.settings.padding_bottom }}px;
-    --lcc-page-padding: {{ section.settings.page_padding }}px;
-    --lcc-page-padding-mobile: {{ section.settings.page_padding_mobile }}px;
-    --lcc-max-width: {{ section.settings.max_width }}px;
-    --lola-slider-button-size: {{ section.settings.button_size }}px;
     --lola-slider-button-color: {{ section.settings.button_icon_color }};
     --lola-slider-button-bg: {{ section.settings.button_background }};
     --lola-slider-button-border: {{ section.settings.button_border_color }};
@@ -38,21 +29,22 @@
     --lola-slider-button-hover-border: {{ section.settings.button_hover_border_color }};
   "
 >
-  <div class="lola-collection-carousel__container">
+  <div class="lola-collection-carousel__content">
     <div class="lola-collection-carousel__header">
       {% if section.settings.heading != blank %}
-        <h2 class="lola-collection-carousel__heading">{{ section.settings.heading }}</h2>
+        <h2 class="lola-collection-carousel__heading h2">{{ section.settings.heading }}</h2>
       {% endif %}
 
       <div
         class="lola-slider-controls lola-collection-carousel__controls{% unless section.settings.show_mobile_arrows %} lola-collection-carousel__controls--desktop-only{% endunless %}"
         data-carousel-controls
+        hidden
       >
         <button
           type="button"
           class="lola-slider-button"
           data-carousel-prev
-          aria-label="{{ section.settings.previous_label | escape }}"
+          aria-label="Previous collections"
         >
           <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
             <path d="M12.75 16.25 6.5 10l6.25-6.25" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -63,7 +55,7 @@
           type="button"
           class="lola-slider-button"
           data-carousel-next
-          aria-label="{{ section.settings.next_label | escape }}"
+          aria-label="Next collections"
         >
           <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
             <path d="M7.5 3.75 13.75 10 7.5 16.25" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -109,21 +101,9 @@
               endif
 
               capture image_sizes
-                echo '(min-width: 990px) calc((min(100vw, '
-                echo section.settings.max_width
-                echo 'px) - '
-                echo section.settings.page_padding | times: 2
-                echo 'px - '
-                echo section.settings.card_gap | times: desktop_columns | minus: section.settings.card_gap
-                echo 'px) / '
+                echo '(min-width: 1200px) calc(100vw / '
                 echo desktop_columns
-                echo '), (min-width: 750px) calc((100vw - '
-                echo section.settings.page_padding | times: 2
-                echo 'px) / '
-                echo tablet_columns
-                echo '), '
-                echo section.settings.mobile_carousel_width
-                echo 'vw'
+                echo '), (min-width: 990px) 25vw, (min-width: 750px) 33vw, 82vw'
               endcapture
             %}
 
@@ -153,7 +133,7 @@
                   {% endif %}
                 </div>
 
-                <div class="lola-collection-carousel__title">{{ card_title }}</div>
+                <h3 class="lola-collection-carousel__title h4">{{ card_title }}</h3>
               </a>
             </li>
           {% else %}
@@ -163,7 +143,7 @@
                   <div class="lola-collection-carousel__media">
                     {{ 'collection-' | append: i | placeholder_svg_tag: 'lola-collection-carousel__placeholder' }}
                   </div>
-                  <div class="lola-collection-carousel__title">Collection {{ i }}</div>
+                  <h3 class="lola-collection-carousel__title h4">Collection {{ i }}</h3>
                 </div>
               </li>
             {% endfor %}
@@ -177,15 +157,13 @@
 {% stylesheet %}
   .lola-collection-carousel {
     width: 100%;
+    min-width: 0;
     overflow: hidden;
-    background: var(--lcc-background);
-    padding-block: var(--lcc-section-padding-top) var(--lcc-section-padding-bottom);
   }
 
-  .lola-collection-carousel__container {
-    width: min(100%, var(--lcc-max-width));
-    margin-inline: auto;
-    padding-inline: var(--lcc-page-padding);
+  .lola-collection-carousel__content {
+    width: 100%;
+    min-width: 0;
   }
 
   .lola-collection-carousel__header {
@@ -193,17 +171,12 @@
     align-items: center;
     justify-content: space-between;
     gap: 24px;
-    margin-bottom: 34px;
+    margin-bottom: 32px;
   }
 
   .lola-collection-carousel__heading {
     margin: 0;
     color: var(--lcc-heading-color);
-    font: inherit;
-    font-size: var(--lcc-heading-size);
-    font-weight: 400;
-    line-height: 1.15;
-    letter-spacing: -0.02em;
   }
 
   .lola-collection-carousel__slider {
@@ -275,7 +248,7 @@
   }
 
   .lola-collection-carousel__image {
-    object-fit: var(--lcc-image-fit);
+    object-fit: cover;
     object-position: center;
     transition: transform 420ms ease;
   }
@@ -291,14 +264,11 @@
 
   .lola-collection-carousel__title {
     display: grid;
-    min-height: 74px;
+    min-height: 72px;
     place-items: center;
+    margin: 0;
     padding: 16px 18px 18px;
     color: var(--lcc-title-color);
-    font: inherit;
-    font-size: var(--lcc-title-size);
-    font-weight: 400;
-    line-height: 1.25;
     text-align: center;
   }
 
@@ -306,27 +276,22 @@
     display: none;
   }
 
-  @media screen and (max-width: 989px) {
+  @media screen and (max-width: 1199px) and (min-width: 990px) {
     .lola-collection-carousel__item {
-      flex-basis: calc(
-        (100% - (var(--lcc-gap) * (var(--lcc-tablet-columns) - 1))) /
-          var(--lcc-tablet-columns)
-      );
+      flex-basis: calc((100% - (var(--lcc-gap) * 3)) / 4);
+    }
+  }
+
+  @media screen and (max-width: 989px) and (min-width: 750px) {
+    .lola-collection-carousel__item {
+      flex-basis: calc((100% - (var(--lcc-gap) * 2)) / 3);
     }
   }
 
   @media screen and (max-width: 749px) {
-    .lola-collection-carousel__container {
-      padding-inline: var(--lcc-page-padding-mobile);
-    }
-
     .lola-collection-carousel__header {
       align-items: flex-start;
       margin-bottom: 22px;
-    }
-
-    .lola-collection-carousel__heading {
-      font-size: var(--lcc-heading-size-mobile);
     }
 
     .lola-collection-carousel__controls--desktop-only {
@@ -334,7 +299,7 @@
     }
 
     .lola-collection-carousel[data-mobile-layout='carousel'] .lola-collection-carousel__item {
-      flex-basis: var(--lcc-mobile-carousel-width);
+      flex-basis: 82%;
     }
 
     .lola-collection-carousel[data-mobile-layout='grid_2'] {
@@ -362,9 +327,8 @@
     }
 
     .lola-collection-carousel__title {
-      min-height: 62px;
+      min-height: 58px;
       padding: 12px 10px 14px;
-      font-size: var(--lcc-title-size-mobile);
     }
   }
 
@@ -482,7 +446,7 @@
   "settings": [
     {
       "type": "header",
-      "content": "标题"
+      "content": "标题设置"
     },
     {
       "type": "text",
@@ -497,51 +461,22 @@
       "default": "#171717"
     },
     {
-      "type": "range",
-      "id": "heading_size",
-      "label": "标题字号（电脑端）",
-      "min": 20,
-      "max": 60,
-      "step": 1,
-      "unit": "px",
-      "default": 34
-    },
-    {
-      "type": "range",
-      "id": "heading_size_mobile",
-      "label": "标题字号（手机端）",
-      "min": 18,
-      "max": 42,
-      "step": 1,
-      "unit": "px",
-      "default": 26
-    },
-    {
       "type": "header",
-      "content": "布局"
+      "content": "布局设置"
     },
     {
       "type": "range",
       "id": "desktop_columns",
-      "label": "每行数量（电脑端）",
+      "label": "每行显示数量",
       "min": 3,
       "max": 8,
       "step": 1,
       "default": 5
     },
     {
-      "type": "range",
-      "id": "tablet_columns",
-      "label": "每行数量（平板/小屏）",
-      "min": 2,
-      "max": 4,
-      "step": 1,
-      "default": 3
-    },
-    {
       "type": "select",
       "id": "mobile_layout",
-      "label": "手机端布局",
+      "label": "移动端布局",
       "options": [
         {
           "value": "carousel",
@@ -553,16 +488,6 @@
         }
       ],
       "default": "carousel"
-    },
-    {
-      "type": "range",
-      "id": "mobile_carousel_width",
-      "label": "手机端轮播卡片宽度",
-      "min": 68,
-      "max": 92,
-      "step": 1,
-      "unit": "%",
-      "default": 82
     },
     {
       "type": "range",
@@ -585,30 +510,14 @@
         },
         {
           "value": "4 / 5",
-          "label": "竖图 4:5"
+          "label": "竖向 4:5"
         },
         {
           "value": "4 / 3",
-          "label": "横图 4:3"
+          "label": "横向 4:3"
         }
       ],
       "default": "1 / 1"
-    },
-    {
-      "type": "select",
-      "id": "image_fit",
-      "label": "图片显示方式",
-      "options": [
-        {
-          "value": "contain",
-          "label": "完整显示"
-        },
-        {
-          "value": "cover",
-          "label": "铺满裁切"
-        }
-      ],
-      "default": "contain"
     },
     {
       "type": "range",
@@ -622,12 +531,12 @@
     },
     {
       "type": "header",
-      "content": "文字与颜色"
+      "content": "颜色设置"
     },
     {
       "type": "color",
       "id": "background_color",
-      "label": "Section 背景颜色",
+      "label": "背景颜色",
       "default": "#F4F4F4"
     },
     {
@@ -643,49 +552,19 @@
       "default": "#171717"
     },
     {
-      "type": "range",
-      "id": "title_size",
-      "label": "系列名称字号（电脑端）",
-      "min": 14,
-      "max": 32,
-      "step": 1,
-      "unit": "px",
-      "default": 23
-    },
-    {
-      "type": "range",
-      "id": "title_size_mobile",
-      "label": "系列名称字号（手机端）",
-      "min": 12,
-      "max": 24,
-      "step": 1,
-      "unit": "px",
-      "default": 16
-    },
-    {
       "type": "header",
-      "content": "统一轮播按钮"
+      "content": "轮播导航"
     },
     {
       "type": "checkbox",
       "id": "show_mobile_arrows",
-      "label": "手机端显示轮播按钮",
+      "label": "移动端显示导航按钮",
       "default": false
-    },
-    {
-      "type": "range",
-      "id": "button_size",
-      "label": "按钮尺寸",
-      "min": 34,
-      "max": 56,
-      "step": 1,
-      "unit": "px",
-      "default": 42
     },
     {
       "type": "color",
       "id": "button_icon_color",
-      "label": "按钮图标颜色",
+      "label": "图标颜色",
       "default": "#171717"
     },
     {
@@ -698,91 +577,65 @@
       "type": "color",
       "id": "button_border_color",
       "label": "按钮边框颜色",
-      "default": "#E5E5E5"
+      "default": "#D8D8D8"
     },
     {
       "type": "color",
       "id": "button_hover_icon_color",
-      "label": "按钮悬停图标颜色",
+      "label": "悬停图标颜色",
       "default": "#FFFFFF"
     },
     {
       "type": "color",
       "id": "button_hover_background",
-      "label": "按钮悬停背景颜色",
+      "label": "悬停背景颜色",
       "default": "#171717"
     },
     {
       "type": "color",
       "id": "button_hover_border_color",
-      "label": "按钮悬停边框颜色",
+      "label": "悬停边框颜色",
       "default": "#171717"
     },
     {
-      "type": "text",
-      "id": "previous_label",
-      "label": "上一张按钮无障碍文本",
-      "default": "Previous collections"
-    },
-    {
-      "type": "text",
-      "id": "next_label",
-      "label": "下一张按钮无障碍文本",
-      "default": "Next collections"
-    },
-    {
       "type": "header",
-      "content": "宽度与间距"
+      "content": "版面设置"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "内容宽度",
+      "options": [
+        {
+          "value": "page-width",
+          "label": "页面宽度"
+        },
+        {
+          "value": "full-width",
+          "label": "全宽"
+        }
+      ],
+      "default": "page-width"
     },
     {
       "type": "range",
-      "id": "max_width",
-      "label": "内容最大宽度",
-      "min": 1000,
-      "max": 1900,
-      "step": 50,
-      "unit": "px",
-      "default": 1750
-    },
-    {
-      "type": "range",
-      "id": "page_padding",
-      "label": "左右留白（电脑端）",
-      "min": 16,
-      "max": 80,
-      "step": 2,
-      "unit": "px",
-      "default": 32
-    },
-    {
-      "type": "range",
-      "id": "page_padding_mobile",
-      "label": "左右留白（手机端）",
-      "min": 10,
-      "max": 32,
+      "id": "padding-block-start",
+      "label": "顶部间距",
+      "min": 0,
+      "max": 100,
       "step": 1,
       "unit": "px",
-      "default": 16
+      "default": 40
     },
     {
       "type": "range",
-      "id": "padding_top",
-      "label": "上间距",
+      "id": "padding-block-end",
+      "label": "底部间距",
       "min": 0,
-      "max": 160,
-      "step": 4,
+      "max": 100,
+      "step": 1,
       "unit": "px",
-      "default": 48
-    },
-    {
-      "type": "range",
-      "id": "padding_bottom",
-      "label": "下间距",
-      "min": 0,
-      "max": 160,
-      "step": 4,
-      "unit": "px",
-      "default": 48
+      "default": 40
     }
   ],
   "blocks": [
@@ -793,18 +646,18 @@
         {
           "type": "collection",
           "id": "collection",
-          "label": "选择产品系列"
+          "label": "产品系列"
         },
         {
           "type": "image_picker",
           "id": "custom_image",
-          "label": "自定义图片（优先显示）"
+          "label": "自定义图片"
         },
         {
           "type": "text",
           "id": "custom_title",
-          "label": "自定义系列名称",
-          "info": "留空时自动显示产品系列原名"
+          "label": "显示名称",
+          "info": "留空时显示所选产品系列的名称"
         }
       ]
     }
