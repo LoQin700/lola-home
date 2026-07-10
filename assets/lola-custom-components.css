@@ -1,3 +1,8 @@
+html:root {
+  --narrow-page-width: 80rem !important;
+  --normal-page-width: 90rem !important;
+}
+
 .lola-slider-controls {
   display: inline-flex;
   align-items: center;
