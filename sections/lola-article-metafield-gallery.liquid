@@ -1,0 +1,235 @@
+{% liquid
+  assign metafield_reference = section.settings.metafield_reference | strip
+  assign metafield_parts = metafield_reference | split: '.'
+  assign metafield_namespace = metafield_parts | first
+  assign metafield_key = metafield_parts | last
+  assign gallery_images = blank
+
+  if article != blank and metafield_namespace != blank and metafield_key != blank
+    assign gallery_images = article.metafields[metafield_namespace][metafield_key].value
+  endif
+%}
+
+{% if gallery_images != blank or request.design_mode %}
+  <section
+    id="LolaArticleGallery-{{ section.id }}"
+    class="section section--{{ section.settings.section_width }} lola-article-gallery spacing-style"
+    style="
+      {% render 'spacing-style', settings: section.settings %}
+      --lag-columns: {{ section.settings.columns }};
+    "
+  >
+    <div class="lola-article-gallery__content">
+      {% if gallery_images != blank %}
+        <ul class="lola-article-gallery__grid" role="list">
+          {% for image in gallery_images limit: section.settings.max_images %}
+            {% liquid
+              assign gallery_image = image.preview_image
+              if gallery_image == blank
+                assign gallery_image = image
+              endif
+
+              assign image_alt = gallery_image.alt | default: article.title
+            %}
+
+            {% if gallery_image != blank %}
+              <li class="lola-article-gallery__item">
+                <div class="lola-article-gallery__media">
+                  {{
+                    gallery_image
+                    | image_url: width: 1800
+                    | image_tag:
+                      widths: '320, 480, 640, 800, 1000, 1200, 1500, 1800',
+                      sizes: '(max-width: 749px) calc((100vw - 44px) / 2), (max-width: 989px) calc((100vw - 96px) / 3), calc(100vw / 3)',
+                      loading: 'lazy',
+                      class: 'lola-article-gallery__image',
+                      alt: image_alt
+                  }}
+                </div>
+              </li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      {% elsif request.design_mode %}
+        <div class="lola-article-gallery__empty">
+          <p>请在文章中填写图片列表元字段：{{ metafield_reference }}</p>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+{% endif %}
+
+{% stylesheet %}
+  .lola-article-gallery {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .lola-article-gallery__content {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .lola-article-gallery__grid {
+    display: grid;
+    grid-template-columns: repeat(var(--lag-columns), minmax(0, 1fr));
+    gap: 28px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .lola-article-gallery__item {
+    min-width: 0;
+  }
+
+  .lola-article-gallery__media {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    aspect-ratio: 1 / 1;
+    border-radius: 4px;
+    background: rgb(var(--color-foreground-rgb) / 0.04);
+  }
+
+  .lola-article-gallery__image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 360ms ease;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .lola-article-gallery__media:hover .lola-article-gallery__image {
+      transform: scale(1.045);
+    }
+  }
+
+  .lola-article-gallery__empty {
+    padding: 32px;
+    border: 1px dashed rgb(var(--color-foreground-rgb) / 0.25);
+    text-align: center;
+  }
+
+  .lola-article-gallery__empty p {
+    margin: 0;
+  }
+
+  @media screen and (max-width: 989px) {
+    .lola-article-gallery__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .lola-article-gallery__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lola-article-gallery__image {
+      transition: none;
+    }
+
+    .lola-article-gallery__media:hover .lola-article-gallery__image {
+      transform: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Lola 文章图片图库",
+  "tag": "section",
+  "class": "lola-section-article-gallery",
+  "enabled_on": {
+    "templates": ["article"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "图片来源"
+    },
+    {
+      "type": "text",
+      "id": "metafield_reference",
+      "label": "图片列表元字段",
+      "default": "custom.gallery_images",
+      "info": "填写文章图片列表元字段的命名空间与键"
+    },
+    {
+      "type": "header",
+      "content": "图库布局"
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "label": "每行显示数量",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "max_images",
+      "label": "最多显示数量",
+      "min": 1,
+      "max": 12,
+      "step": 1,
+      "default": 6
+    },
+    {
+      "type": "header",
+      "content": "版面设置"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "内容宽度",
+      "options": [
+        {
+          "value": "page-width",
+          "label": "页面宽度"
+        },
+        {
+          "value": "full-width",
+          "label": "全宽"
+        }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "顶部间距",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "底部间距",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 48
+    }
+  ],
+  "presets": [
+    {
+      "name": "Lola 文章图片图库"
+    }
+  ]
+}
+{% endschema %}
