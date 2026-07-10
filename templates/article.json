@@ -82,23 +82,12 @@
           "blocks": {}
         }
       },
-      "disabled": true,
       "settings": {
         "content_direction": "column",
         "gap": 32,
         "color_scheme": "",
         "padding-block-start": 40,
         "padding-block-end": 80
-      }
-    },
-    "lola_article_hero_content_iEUb4b": {
-      "type": "lola-article-hero-content",
-      "name": "Lola 文章主体",
-      "settings": {
-        "cover_width": "full-width",
-        "cover_height": 540,
-        "cover_height_mobile": 310,
-        "padding_bottom": 80
       }
     },
     "lola_article_metafield_gallery_kagqfQ": {
@@ -116,7 +105,6 @@
   },
   "order": [
     "section",
-    "lola_article_hero_content_iEUb4b",
     "lola_article_metafield_gallery_kagqfQ"
   ]
 }
