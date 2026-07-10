@@ -22,15 +22,15 @@
     --lola-slider-button-color: {{ section.settings.button_icon_color }};
     --lola-slider-button-bg: {{ section.settings.button_background }};
     --lola-slider-button-border: {{ section.settings.button_border_color }};
-    --lola-slider-button-hover-color: {{ section.settings.button_background }};
-    --lola-slider-button-hover-bg: {{ section.settings.button_icon_color }};
-    --lola-slider-button-hover-border: {{ section.settings.button_icon_color }};
+    --lola-slider-button-hover-color: {{ section.settings.button_hover_icon_color }};
+    --lola-slider-button-hover-bg: {{ section.settings.button_hover_background }};
+    --lola-slider-button-hover-border: {{ section.settings.button_hover_border_color }};
   "
 >
   <div class="lola-featured-blog__content">
     <div class="lola-featured-blog__header">
       {% if section.settings.heading != blank %}
-        <h2 class="lola-featured-blog__heading h4">{{ section.settings.heading }}</h2>
+        <h4 class="lola-featured-blog__heading h4">{{ section.settings.heading }}</h4>
       {% endif %}
 
       <div class="lola-slider-controls lola-featured-blog__controls" data-blog-controls hidden>
@@ -88,9 +88,9 @@
                   </a>
 
                   <div class="lola-featured-blog__body">
-                    <h3 class="lola-featured-blog__title h5">
+                    <h5 class="lola-featured-blog__title h5">
                       <a href="{{ article.url }}">{{ article.title }}</a>
-                    </h3>
+                    </h5>
 
                     {% if section.settings.show_excerpt %}
                       {% liquid
@@ -113,7 +113,7 @@
                     {{ 'image' | placeholder_svg_tag: 'lola-featured-blog__placeholder' }}
                   </div>
                   <div class="lola-featured-blog__body">
-                    <h3 class="lola-featured-blog__title h5">Article title</h3>
+                    <h5 class="lola-featured-blog__title h5">Article title</h5>
                     {% if section.settings.show_excerpt %}
                       <p class="lola-featured-blog__excerpt">Add a blog to display its latest articles.</p>
                     {% endif %}
@@ -460,22 +460,44 @@
       "default": "#5C5C5C"
     },
     {
+      "type": "header",
+      "content": "轮播按钮"
+    },
+    {
       "type": "color",
       "id": "button_icon_color",
-      "label": "导航图标颜色",
+      "label": "按钮图标颜色",
       "default": "#171717"
     },
     {
       "type": "color",
       "id": "button_background",
-      "label": "导航按钮背景",
+      "label": "按钮背景颜色",
       "default": "#F8F8F8"
     },
     {
       "type": "color",
       "id": "button_border_color",
-      "label": "导航按钮边框",
+      "label": "按钮边框颜色",
       "default": "#D8D8D8"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_icon_color",
+      "label": "按钮悬停图标颜色",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_background",
+      "label": "按钮悬停背景颜色",
+      "default": "#171717"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_border_color",
+      "label": "按钮悬停边框颜色",
+      "default": "#171717"
     },
     {
       "type": "header",
