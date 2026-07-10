@@ -89,9 +89,21 @@
         "padding-block-start": 40,
         "padding-block-end": 80
       }
+    },
+    "lola_article_gallery": {
+      "type": "lola-article-metafield-gallery",
+      "settings": {
+        "metafield_reference": "custom.gallery_images",
+        "columns": 3,
+        "max_images": 6,
+        "section_width": "page-width",
+        "padding-block-start": 24,
+        "padding-block-end": 48
+      }
     }
   },
   "order": [
-    "section"
+    "section",
+    "lola_article_gallery"
   ]
 }
