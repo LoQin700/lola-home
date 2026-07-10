@@ -95,7 +95,6 @@
       "name": "Lola 文章图片图库",
       "settings": {
         "heading": "",
-        "metafield_reference": "",
         "columns": 3,
         "max_images": 6,
         "section_width": "page-width",
