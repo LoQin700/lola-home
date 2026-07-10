@@ -382,7 +382,7 @@
         "blog": "news",
         "article_limit": 6,
         "desktop_columns": 3,
-        "show_excerpt": true,
+        "show_excerpt": false,
         "card_gap": 20,
         "background_color": "#FFFFFF",
         "heading_color": "#171717",
