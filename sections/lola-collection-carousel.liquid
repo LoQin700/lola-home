@@ -32,7 +32,7 @@
   <div class="lola-collection-carousel__content">
     <div class="lola-collection-carousel__header">
       {% if section.settings.heading != blank %}
-        <h2 class="lola-collection-carousel__heading h4">{{ section.settings.heading }}</h2>
+        <h4 class="lola-collection-carousel__heading h4">{{ section.settings.heading }}</h4>
       {% endif %}
 
       <div
@@ -121,7 +121,7 @@
                   {% endif %}
                 </div>
 
-                <h3 class="lola-collection-carousel__title h5">{{ card_title }}</h3>
+                <h5 class="lola-collection-carousel__title h5">{{ card_title }}</h5>
               </a>
             </li>
           {% else %}
@@ -131,7 +131,7 @@
                   <div class="lola-collection-carousel__media">
                     {{ 'collection-' | append: i | placeholder_svg_tag: 'lola-collection-carousel__placeholder' }}
                   </div>
-                  <h3 class="lola-collection-carousel__title h5">Collection {{ i }}</h3>
+                  <h5 class="lola-collection-carousel__title h5">Collection {{ i }}</h5>
                 </div>
               </li>
             {% endfor %}
@@ -193,7 +193,10 @@
   }
 
   .lola-collection-carousel__item {
-    flex: 0 0 calc((100% - (var(--lcc-gap) * (var(--lcc-desktop-columns) - 1))) / var(--lcc-desktop-columns));
+    flex: 0 0 calc(
+      (100% - (var(--lcc-gap) * (var(--lcc-desktop-columns) - 1))) /
+        var(--lcc-desktop-columns)
+    );
     min-width: 0;
     scroll-snap-align: start;
   }
@@ -236,28 +239,26 @@
   }
 
   .lola-collection-carousel__placeholder {
-    background: rgba(0, 0, 0, 0.03);
     fill: rgba(0, 0, 0, 0.08);
+    background: rgba(0, 0, 0, 0.03);
+  }
+
+  .lola-collection-carousel__card:hover .lola-collection-carousel__image {
+    transform: scale(1.035);
   }
 
   .lola-collection-carousel__title {
     display: grid;
-    min-height: 68px;
+    min-height: 72px;
     place-items: center;
     margin: 0;
-    padding: 14px 16px 16px;
+    padding: 16px 18px 18px;
     color: var(--lcc-title-color);
     text-align: center;
   }
 
   .lola-collection-carousel__controls[hidden] {
     display: none;
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    .lola-collection-carousel__card:hover .lola-collection-carousel__image {
-      transform: scale(1.035);
-    }
   }
 
   @media screen and (max-width: 1199px) and (min-width: 990px) {
@@ -311,8 +312,8 @@
     }
 
     .lola-collection-carousel__title {
-      min-height: 56px;
-      padding: 11px 9px 13px;
+      min-height: 58px;
+      padding: 12px 10px 14px;
     }
   }
 
@@ -537,18 +538,18 @@
     },
     {
       "type": "header",
-      "content": "轮播导航"
+      "content": "轮播按钮"
     },
     {
       "type": "checkbox",
       "id": "show_mobile_arrows",
-      "label": "移动端显示导航按钮",
+      "label": "移动端显示轮播按钮",
       "default": false
     },
     {
       "type": "color",
       "id": "button_icon_color",
-      "label": "图标颜色",
+      "label": "按钮图标颜色",
       "default": "#171717"
     },
     {
@@ -566,19 +567,19 @@
     {
       "type": "color",
       "id": "button_hover_icon_color",
-      "label": "悬停图标颜色",
+      "label": "按钮悬停图标颜色",
       "default": "#FFFFFF"
     },
     {
       "type": "color",
       "id": "button_hover_background",
-      "label": "悬停背景颜色",
+      "label": "按钮悬停背景颜色",
       "default": "#171717"
     },
     {
       "type": "color",
       "id": "button_hover_border_color",
-      "label": "悬停边框颜色",
+      "label": "按钮悬停边框颜色",
       "default": "#171717"
     },
     {
