@@ -82,6 +82,7 @@
           "blocks": {}
         }
       },
+      "disabled": true,
       "settings": {
         "content_direction": "column",
         "gap": 32,
@@ -90,11 +91,22 @@
         "padding-block-end": 80
       }
     },
+    "lola_article_hero_content_FyBzxg": {
+      "type": "lola-article-hero-content",
+      "name": "Lola 文章主体",
+      "settings": {
+        "cover_width": "full-width",
+        "cover_height": 480,
+        "cover_height_mobile": 280,
+        "padding_bottom": 80
+      }
+    },
     "lola_article_metafield_gallery_kagqfQ": {
       "type": "lola-article-metafield-gallery",
       "name": "Lola 文章图片图库",
       "settings": {
         "heading": "",
+        "metafield_reference": "custom.img",
         "columns": 3,
         "max_images": 6,
         "section_width": "page-width",
@@ -105,6 +117,7 @@
   },
   "order": [
     "section",
+    "lola_article_hero_content_FyBzxg",
     "lola_article_metafield_gallery_kagqfQ"
   ]
 }
