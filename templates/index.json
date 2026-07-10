@@ -52,6 +52,7 @@
           "type": "collection",
           "settings": {
             "collection": "home-furnishings",
+            "custom_image": "shopify://shop_images/Dining_Chair.jpg",
             "custom_title": ""
           }
         },
@@ -59,6 +60,7 @@
           "type": "collection",
           "settings": {
             "collection": "customer-photos",
+            "custom_image": "shopify://shop_images/Occasional_Chair.jpg",
             "custom_title": ""
           }
         },
@@ -66,6 +68,7 @@
           "type": "collection",
           "settings": {
             "collection": "indoor-furniture",
+            "custom_image": "shopify://shop_images/Stool.jpg",
             "custom_title": ""
           }
         },
@@ -73,6 +76,7 @@
           "type": "collection",
           "settings": {
             "collection": "outdoor-furniture",
+            "custom_image": "shopify://shop_images/Dining_Tables.jpg",
             "custom_title": ""
           }
         }
@@ -159,7 +163,7 @@
       "name": "t:names.hero",
       "settings": {
         "media_type_1": "image",
-        "image_1": "shopify://shop_images/20260505152606_1575_21.png",
+        "image_1": "shopify://shop_images/Uultis_Contemporary_Furniture.jpg",
         "media_type_2": "image",
         "stack_media_on_mobile": false,
         "custom_mobile_media": false,
@@ -176,7 +180,7 @@
         "vertical_alignment_flex_direction_column": "center",
         "gap": 24,
         "section_width": "page-width",
-        "section_height": "large",
+        "section_height": "medium",
         "section_height_custom": 50,
         "color_scheme": "scheme-6",
         "toggle_overlay": true,
