@@ -58,6 +58,17 @@
   stroke: currentColor;
 }
 
+.lola-collection-carousel__title,
+.lola-featured-blog__title {
+  font-family: var(--font-h5--family);
+  font-size: var(--font-h5--size);
+  font-style: var(--font-h5--style);
+  font-weight: var(--font-h5--weight);
+  line-height: var(--font-h5--line-height);
+  letter-spacing: var(--font-h5--letter-spacing);
+  text-transform: var(--font-h5--case);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .lola-slider-button {
     transition: none;
