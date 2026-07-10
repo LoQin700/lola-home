@@ -1,0 +1,527 @@
+{% liquid
+  assign selected_blog = section.settings.blog
+  assign article_limit = section.settings.article_limit
+  assign desktop_columns = section.settings.desktop_columns
+%}
+
+<div
+  class="section-background"
+  style="background-color: {{ section.settings.background_color }};"
+></div>
+
+<section
+  id="LolaFeaturedBlog-{{ section.id }}"
+  class="section section--{{ section.settings.section_width }} lola-featured-blog spacing-style"
+  style="
+    {% render 'spacing-style', settings: section.settings %}
+    --lfb-columns: {{ desktop_columns }};
+    --lfb-heading-color: {{ section.settings.heading_color }};
+    --lfb-title-color: {{ section.settings.article_title_color }};
+    --lfb-text-color: {{ section.settings.text_color }};
+    --lfb-gap: {{ section.settings.card_gap }}px;
+    --lola-slider-button-color: {{ section.settings.button_icon_color }};
+    --lola-slider-button-bg: {{ section.settings.button_background }};
+    --lola-slider-button-border: {{ section.settings.button_border_color }};
+    --lola-slider-button-hover-color: {{ section.settings.button_background }};
+    --lola-slider-button-hover-bg: {{ section.settings.button_icon_color }};
+    --lola-slider-button-hover-border: {{ section.settings.button_icon_color }};
+  "
+>
+  <div class="lola-featured-blog__content">
+    <div class="lola-featured-blog__header">
+      {% if section.settings.heading != blank %}
+        <h2 class="lola-featured-blog__heading h4">{{ section.settings.heading }}</h2>
+      {% endif %}
+
+      <div class="lola-slider-controls lola-featured-blog__controls" data-blog-controls hidden>
+        <button
+          type="button"
+          class="lola-slider-button"
+          data-blog-prev
+          aria-label="Previous articles"
+        >
+          <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path d="M12.75 16.25 6.5 10l6.25-6.25" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </button>
+
+        <button
+          type="button"
+          class="lola-slider-button"
+          data-blog-next
+          aria-label="Next articles"
+        >
+          <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path d="M7.5 3.75 13.75 10 7.5 16.25" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <lola-blog-slider class="lola-featured-blog__slider">
+      <div
+        class="lola-featured-blog__viewport"
+        data-blog-viewport
+        tabindex="0"
+        aria-label="{{ section.settings.heading | escape }}"
+      >
+        <ul class="lola-featured-blog__track" role="list">
+          {% if selected_blog != blank and selected_blog.articles_count > 0 %}
+            {% for article in selected_blog.articles limit: article_limit %}
+              <li class="lola-featured-blog__item">
+                <article class="lola-featured-blog__card">
+                  <a class="lola-featured-blog__media" href="{{ article.url }}" aria-label="{{ article.title | escape }}">
+                    {% if article.image != blank %}
+                      {{
+                        article.image
+                        | image_url: width: 1600
+                        | image_tag:
+                          widths: '320, 480, 640, 800, 1000, 1200, 1400, 1600',
+                          sizes: '(min-width: 1200px) calc(100vw / 3), (min-width: 750px) 50vw, 86vw',
+                          loading: 'lazy',
+                          class: 'lola-featured-blog__image',
+                          alt: article.title
+                      }}
+                    {% else %}
+                      {{ 'image' | placeholder_svg_tag: 'lola-featured-blog__placeholder' }}
+                    {% endif %}
+                  </a>
+
+                  <div class="lola-featured-blog__body">
+                    <h3 class="lola-featured-blog__title h5">
+                      <a href="{{ article.url }}">{{ article.title }}</a>
+                    </h3>
+
+                    {% if section.settings.show_excerpt %}
+                      {% liquid
+                        assign article_text = article.excerpt | default: article.content
+                        assign article_text = article_text | strip_html | truncatewords: 24
+                      %}
+                      {% if article_text != blank %}
+                        <p class="lola-featured-blog__excerpt">{{ article_text }}</p>
+                      {% endif %}
+                    {% endif %}
+                  </div>
+                </article>
+              </li>
+            {% endfor %}
+          {% elsif request.design_mode %}
+            {% for i in (1..3) %}
+              <li class="lola-featured-blog__item">
+                <article class="lola-featured-blog__card">
+                  <div class="lola-featured-blog__media">
+                    {{ 'image' | placeholder_svg_tag: 'lola-featured-blog__placeholder' }}
+                  </div>
+                  <div class="lola-featured-blog__body">
+                    <h3 class="lola-featured-blog__title h5">Article title</h3>
+                    {% if section.settings.show_excerpt %}
+                      <p class="lola-featured-blog__excerpt">Add a blog to display its latest articles.</p>
+                    {% endif %}
+                  </div>
+                </article>
+              </li>
+            {% endfor %}
+          {% endif %}
+        </ul>
+      </div>
+    </lola-blog-slider>
+  </div>
+</section>
+
+{% stylesheet %}
+  .lola-featured-blog {
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .lola-featured-blog__content,
+  .lola-featured-blog__slider {
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .lola-featured-blog__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 28px;
+  }
+
+  .lola-featured-blog__heading {
+    margin: 0;
+    color: var(--lfb-heading-color);
+  }
+
+  .lola-featured-blog__viewport {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    overscroll-behavior-inline: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .lola-featured-blog__viewport::-webkit-scrollbar {
+    display: none;
+  }
+
+  .lola-featured-blog__track {
+    display: flex;
+    gap: var(--lfb-gap);
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .lola-featured-blog__item {
+    flex: 0 0 calc((100% - (var(--lfb-gap) * (var(--lfb-columns) - 1))) / var(--lfb-columns));
+    min-width: 0;
+    scroll-snap-align: start;
+  }
+
+  .lola-featured-blog__card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-width: 0;
+  }
+
+  .lola-featured-blog__media {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border-radius: 4px;
+    background: rgb(var(--color-foreground-rgb) / 0.04);
+  }
+
+  .lola-featured-blog__image,
+  .lola-featured-blog__placeholder {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .lola-featured-blog__image {
+    object-fit: cover;
+    object-position: center;
+    transition: transform 360ms ease;
+  }
+
+  .lola-featured-blog__placeholder {
+    background: rgb(var(--color-foreground-rgb) / 0.04);
+    fill: rgb(var(--color-foreground-rgb) / 0.12);
+  }
+
+  .lola-featured-blog__body {
+    padding-top: 16px;
+  }
+
+  .lola-featured-blog__title {
+    margin: 0;
+    color: var(--lfb-title-color);
+  }
+
+  .lola-featured-blog__title a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .lola-featured-blog__title a:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .lola-featured-blog__excerpt {
+    margin: 10px 0 0;
+    color: var(--lfb-text-color);
+  }
+
+  .lola-featured-blog__controls[hidden] {
+    display: none;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .lola-featured-blog__media:hover .lola-featured-blog__image {
+      transform: scale(1.045);
+    }
+  }
+
+  @media screen and (max-width: 989px) and (min-width: 750px) {
+    .lola-featured-blog__item {
+      flex-basis: calc((100% - var(--lfb-gap)) / 2);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .lola-featured-blog__header {
+      margin-bottom: 20px;
+    }
+
+    .lola-featured-blog__controls {
+      display: none;
+    }
+
+    .lola-featured-blog__item {
+      flex-basis: 86%;
+    }
+
+    .lola-featured-blog__body {
+      padding-top: 12px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lola-featured-blog__viewport {
+      scroll-behavior: auto;
+    }
+
+    .lola-featured-blog__image {
+      transition: none;
+    }
+
+    .lola-featured-blog__media:hover .lola-featured-blog__image {
+      transform: none;
+    }
+  }
+{% endstylesheet %}
+
+<script>
+  (() => {
+    if (customElements.get('lola-blog-slider')) return;
+
+    class LolaBlogSlider extends HTMLElement {
+      connectedCallback() {
+        this.section = this.closest('.lola-featured-blog');
+        this.viewport = this.querySelector('[data-blog-viewport]');
+        this.controls = this.section?.querySelector('[data-blog-controls]');
+        this.previousButton = this.section?.querySelector('[data-blog-prev]');
+        this.nextButton = this.section?.querySelector('[data-blog-next]');
+        this.items = Array.from(this.querySelectorAll('.lola-featured-blog__item'));
+
+        if (!this.viewport || !this.previousButton || !this.nextButton) return;
+
+        this.onPrevious = () => this.move(-1);
+        this.onNext = () => this.move(1);
+        this.onScroll = () => this.queueControlUpdate();
+        this.onResize = () => this.queueControlUpdate();
+
+        this.previousButton.addEventListener('click', this.onPrevious);
+        this.nextButton.addEventListener('click', this.onNext);
+        this.viewport.addEventListener('scroll', this.onScroll, { passive: true });
+        window.addEventListener('resize', this.onResize);
+
+        if ('ResizeObserver' in window) {
+          this.resizeObserver = new ResizeObserver(this.onResize);
+          this.resizeObserver.observe(this.viewport);
+        }
+
+        requestAnimationFrame(() => this.updateControls());
+      }
+
+      disconnectedCallback() {
+        this.previousButton?.removeEventListener('click', this.onPrevious);
+        this.nextButton?.removeEventListener('click', this.onNext);
+        this.viewport?.removeEventListener('scroll', this.onScroll);
+        window.removeEventListener('resize', this.onResize);
+        this.resizeObserver?.disconnect();
+      }
+
+      move(direction) {
+        const firstItem = this.items[0];
+        if (!firstItem) return;
+
+        const track = this.querySelector('.lola-featured-blog__track');
+        const styles = getComputedStyle(track);
+        const gap = Number.parseFloat(styles.columnGap || styles.gap || 0);
+        const distance = firstItem.getBoundingClientRect().width + gap;
+
+        this.viewport.scrollBy({
+          left: direction * distance,
+          behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
+        });
+      }
+
+      queueControlUpdate() {
+        cancelAnimationFrame(this.controlFrame);
+        this.controlFrame = requestAnimationFrame(() => this.updateControls());
+      }
+
+      updateControls() {
+        const isMobile = window.matchMedia('(max-width: 749px)').matches;
+        const hasOverflow = this.viewport.scrollWidth > this.viewport.clientWidth + 2;
+
+        if (this.controls) this.controls.hidden = !hasOverflow || isMobile;
+
+        if (!hasOverflow) {
+          this.previousButton.disabled = true;
+          this.nextButton.disabled = true;
+          return;
+        }
+
+        const maxScroll = this.viewport.scrollWidth - this.viewport.clientWidth;
+        const currentScroll = Math.abs(this.viewport.scrollLeft);
+
+        this.previousButton.disabled = currentScroll <= 2;
+        this.nextButton.disabled = currentScroll >= maxScroll - 2;
+      }
+    }
+
+    customElements.define('lola-blog-slider', LolaBlogSlider);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Lola Blog 轮播",
+  "tag": "section",
+  "class": "lola-section-featured-blog",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "标题",
+      "default": "Project Gallery"
+    },
+    {
+      "type": "blog",
+      "id": "blog",
+      "label": "Blog"
+    },
+    {
+      "type": "range",
+      "id": "article_limit",
+      "label": "最多显示数量",
+      "min": 3,
+      "max": 12,
+      "step": 1,
+      "default": 6
+    },
+    {
+      "type": "range",
+      "id": "desktop_columns",
+      "label": "每行显示数量",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "checkbox",
+      "id": "show_excerpt",
+      "label": "显示摘要",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "card_gap",
+      "label": "卡片间距",
+      "min": 8,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "颜色设置"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "背景颜色",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "标题颜色",
+      "default": "#171717"
+    },
+    {
+      "type": "color",
+      "id": "article_title_color",
+      "label": "文章标题颜色",
+      "default": "#171717"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "正文颜色",
+      "default": "#5C5C5C"
+    },
+    {
+      "type": "color",
+      "id": "button_icon_color",
+      "label": "导航图标颜色",
+      "default": "#171717"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "导航按钮背景",
+      "default": "#F8F8F8"
+    },
+    {
+      "type": "color",
+      "id": "button_border_color",
+      "label": "导航按钮边框",
+      "default": "#D8D8D8"
+    },
+    {
+      "type": "header",
+      "content": "版面设置"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "内容宽度",
+      "options": [
+        {
+          "value": "page-width",
+          "label": "页面宽度"
+        },
+        {
+          "value": "full-width",
+          "label": "全宽"
+        }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "顶部间距",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "底部间距",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 64
+    }
+  ],
+  "presets": [
+    {
+      "name": "Lola Blog 轮播"
+    }
+  ]
+}
+{% endschema %}
