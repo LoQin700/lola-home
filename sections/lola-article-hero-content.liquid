@@ -1,0 +1,228 @@
+{% liquid
+  assign has_cover = false
+  if article.image != blank
+    assign has_cover = true
+  endif
+%}
+
+<article
+  id="LolaArticleMain-{{ section.id }}"
+  class="lola-article-main{% unless has_cover %} lola-article-main--no-cover{% endunless %}"
+  itemscope
+  itemtype="https://schema.org/BlogPosting"
+  style="
+    --lam-cover-height: {{ section.settings.cover_height }}px;
+    --lam-cover-height-mobile: {{ section.settings.cover_height_mobile }}px;
+    --lam-padding-bottom: {{ section.settings.padding_bottom }}px;
+  "
+>
+  {% if has_cover %}
+    <div class="section section--{{ section.settings.cover_width }} lola-article-main__cover-layout">
+      <div class="lola-article-main__cover">
+        {{
+          article.image
+          | image_url: width: 2400
+          | image_tag:
+            widths: '480, 720, 960, 1200, 1600, 2000, 2400',
+            sizes: '100vw',
+            loading: 'eager',
+            fetchpriority: 'high',
+            class: 'lola-article-main__cover-image',
+            alt: article.image.alt | default: article.title
+        }}
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="lola-article-main__content-shell">
+    <div class="lola-article-main__content-card">
+      <header class="lola-article-main__header">
+        <h1 class="lola-article-main__title h2" itemprop="headline">{{ article.title }}</h1>
+      </header>
+
+      {% if article.content != blank %}
+        <div class="lola-article-main__body rte" itemprop="articleBody">
+          {{ article.content }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</article>
+
+<script type="application/ld+json">
+  {{ article | structured_data }}
+</script>
+
+{% stylesheet %}
+  .lola-article-main {
+    width: 100%;
+    padding-bottom: var(--lam-padding-bottom);
+  }
+
+  .lola-article-main__cover-layout {
+    width: 100%;
+  }
+
+  .lola-article-main__cover {
+    width: 100%;
+    height: var(--lam-cover-height);
+    overflow: hidden;
+    background: rgb(var(--color-foreground-rgb) / 0.04);
+  }
+
+  .lola-article-main__cover-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .lola-article-main__content-shell {
+    position: relative;
+    z-index: 2;
+    width: min(calc(100% - 48px), 1050px);
+    margin: -80px auto 0;
+  }
+
+  .lola-article-main__content-card {
+    width: 100%;
+    padding: clamp(40px, 5vw, 76px) clamp(28px, 5vw, 64px) clamp(48px, 6vw, 88px);
+    border-radius: 10px 10px 0 0;
+    background: var(--color-background);
+    color: var(--color-foreground);
+  }
+
+  .lola-article-main__header {
+    max-width: 880px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .lola-article-main__title {
+    margin: 0;
+  }
+
+  .lola-article-main__body {
+    width: 100%;
+    max-width: 920px;
+    margin: clamp(32px, 4vw, 52px) auto 0;
+  }
+
+  .lola-article-main__body :is(p, ul, ol, blockquote) {
+    font: inherit;
+  }
+
+  .lola-article-main__body > :first-child {
+    margin-top: 0;
+  }
+
+  .lola-article-main__body > :last-child {
+    margin-bottom: 0;
+  }
+
+  .lola-article-main--no-cover .lola-article-main__content-shell {
+    margin-top: 0;
+    padding-top: 48px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .lola-article-main {
+      padding-bottom: max(40px, calc(var(--lam-padding-bottom) * 0.72));
+    }
+
+    .lola-article-main__cover {
+      height: var(--lam-cover-height-mobile);
+    }
+
+    .lola-article-main__content-shell {
+      width: calc(100% - 24px);
+      margin-top: -32px;
+    }
+
+    .lola-article-main__content-card {
+      padding: 30px 20px 48px;
+      border-radius: 8px 8px 0 0;
+    }
+
+    .lola-article-main__body {
+      margin-top: 28px;
+    }
+
+    .lola-article-main--no-cover .lola-article-main__content-shell {
+      padding-top: 28px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Lola 文章主体",
+  "tag": "section",
+  "class": "lola-section-article-main",
+  "enabled_on": {
+    "templates": ["article"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "封面图片"
+    },
+    {
+      "type": "select",
+      "id": "cover_width",
+      "label": "封面宽度",
+      "options": [
+        {
+          "value": "page-width",
+          "label": "页面宽度"
+        },
+        {
+          "value": "full-width",
+          "label": "全宽"
+        }
+      ],
+      "default": "full-width"
+    },
+    {
+      "type": "range",
+      "id": "cover_height",
+      "label": "封面高度",
+      "min": 280,
+      "max": 800,
+      "step": 20,
+      "unit": "px",
+      "default": 480
+    },
+    {
+      "type": "range",
+      "id": "cover_height_mobile",
+      "label": "移动端封面高度",
+      "min": 200,
+      "max": 500,
+      "step": 10,
+      "unit": "px",
+      "default": 280
+    },
+    {
+      "type": "header",
+      "content": "版面设置"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "底部间距",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    }
+  ],
+  "presets": [
+    {
+      "name": "Lola 文章主体"
+    }
+  ]
+}
+{% endschema %}
