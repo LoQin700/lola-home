@@ -379,10 +379,10 @@
       "name": "Lola Blog 轮播",
       "settings": {
         "heading": "Project Gallery",
-        "blog": "",
+        "blog": "news",
         "article_limit": 6,
         "desktop_columns": 3,
-        "show_excerpt": false,
+        "show_excerpt": true,
         "card_gap": 20,
         "background_color": "#FFFFFF",
         "heading_color": "#171717",
