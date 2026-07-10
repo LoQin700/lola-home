@@ -113,7 +113,7 @@
           "type": "text",
           "name": "t:names.heading",
           "settings": {
-            "text": "<p>Browse our latest products</p>",
+            "text": "<p>Where Comfort Begins</p>",
             "width": "fit-content",
             "max_width": "normal",
             "alignment": "left",
@@ -142,7 +142,7 @@
             "label": "Shop all",
             "link": "shopify://collections/all",
             "open_in_new_tab": false,
-            "style_class": "button-secondary",
+            "style_class": "button",
             "width": "fit-content",
             "custom_width": 100,
             "width_mobile": "fit-content",
@@ -178,7 +178,7 @@
         "section_height": "large",
         "section_height_custom": 50,
         "color_scheme": "scheme-6",
-        "toggle_overlay": false,
+        "toggle_overlay": true,
         "overlay_color": "#12121266",
         "overlay_style": "solid",
         "gradient_direction": "to bottom",
@@ -299,7 +299,7 @@
         "text_fGFFeQ": {
           "type": "text",
           "settings": {
-            "text": "<h2>New arrivals</h2>",
+            "text": "<p>Crafted with Purpose</p>",
             "width": "fit-content",
             "max_width": "narrow",
             "alignment": "left",
@@ -325,7 +325,7 @@
           "type": "button",
           "name": "t:names.button",
           "settings": {
-            "label": "Shop now",
+            "label": "DISCOVER OUR CRAFT",
             "link": "shopify://collections/all",
             "open_in_new_tab": false,
             "style_class": "button",
