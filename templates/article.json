@@ -6,7 +6,8 @@
  * or related systems. Please exercise caution as any changes
  * made to this file may be overwritten.
  * ------------------------------------------------------------
- */{
+ */
+{
   "sections": {
     "section": {
       "type": "main-blog-post",
@@ -54,11 +55,10 @@
           "blocks": {}
         },
         "blog-post-image": {
-          "type": "image",
-          "name": "Featured image",
+          "type": "_blog-post-featured-image",
           "static": true,
           "settings": {
-            "image_ratio": "landscape",
+            "image_ratio": "adapt",
             "width": "fill",
             "custom_width": 100,
             "width_mobile": "fill",
@@ -90,10 +90,12 @@
         "padding-block-end": 80
       }
     },
-    "lola_article_gallery": {
+    "lola_article_metafield_gallery_kagqfQ": {
       "type": "lola-article-metafield-gallery",
+      "name": "Lola 文章图片图库",
       "settings": {
-        "metafield_reference": "custom.gallery_images",
+        "heading": "",
+        "metafield_reference": "",
         "columns": 3,
         "max_images": 6,
         "section_width": "page-width",
@@ -104,6 +106,6 @@
   },
   "order": [
     "section",
-    "lola_article_gallery"
+    "lola_article_metafield_gallery_kagqfQ"
   ]
 }
